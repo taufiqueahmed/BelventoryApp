@@ -1,0 +1,4 @@
+.env*
+node_modules
+scripts/reset.js
+scripts/check.js
