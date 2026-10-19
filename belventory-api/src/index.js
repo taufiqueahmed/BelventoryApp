@@ -11,8 +11,8 @@ const app = express();
 app.set('trust proxy', 1); // Railway sits behind a proxy
 app.use(helmet());
 app.use(express.json({ limit: '12mb' })); // item photos arrive as data URLs
-const origins = (process.env.CORS_ORIGIN || '').split(',').map(s => s.trim()).filter(Boolean);
-app.use(cors({ origin: origins }));
+const origins = (process.env.CORS_ORIGIN || '').split(',').map(s => s.trim().replace(/\/+$/, '')).filter(Boolean);
+app.use(cors({ origin: origins, allowedHeaders: ['Content-Type', 'Authorization'] }));
 
 const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) throw new Error('JWT_SECRET is required');
@@ -236,5 +236,6 @@ app.use((err, _req, res, _next) => {
   if (!err.status) console.error(err);
   res.status(err.status || 500).json({ error: err.status ? err.message : 'Something went wrong.' });
 });
+
 
 app.listen(process.env.PORT || 3000, () => console.log('Belventory API listening'));
